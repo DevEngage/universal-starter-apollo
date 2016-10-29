@@ -26,6 +26,10 @@ import { createEngine } from 'angular2-express-engine';
 import { MainModule } from './app/app.node.module';
 import { GraphQL, GraphiQL } from './backend/graphql';
 
+// SSR
+import { client as apolloClient } from './app/apollo.node';
+import { getAuthorQuery } from './app/author/author-data.component';
+
 // enable prod for faster renders
 enableProdMode();
 
@@ -45,7 +49,7 @@ app.engine('.html', createEngine({
 }));
 app.set('port', process.env.PORT || 3000);
 app.set('views', __dirname);
-app.set('view engine', 'html');
+app.set('view engine', 'ejs');
 
 app.use(cookieParser('Angular 2 Universal'));
 app.use(bodyParser.json());
@@ -60,14 +64,25 @@ import { serverApi } from './backend/api';
 app.get('/data.json', serverApi);
 
 function ngApp(req, res) {
-  res.render('index', {
-    req,
-    res,
-    preboot: false,
-    baseUrl: '/',
-    requestUrl: req.originalUrl,
-    originUrl: 'http://localhost:3000'
-  });
+  // Init the store
+  apolloClient.initStore();
+
+  return Promise.resolve()
+    // Fetch the query to add data to the store
+    .then(() => apolloClient.query({query: getAuthorQuery}))
+    // Render index.ejs
+    .then(() => {
+      res.render('index', {
+        req,
+        res,
+        preboot: false,
+        baseUrl: '/',
+        requestUrl: req.originalUrl,
+        originUrl: 'http://localhost:3000',
+        // Get the data from the store
+        apolloStore: apolloClient.store.getState().apollo.data
+      });
+    });
 }
 // Routes with html5pushstate
 // ensure routes match client-side-app

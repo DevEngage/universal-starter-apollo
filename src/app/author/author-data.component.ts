@@ -7,6 +7,15 @@ import gql from 'graphql-tag';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 
+export const getAuthorQuery = gql`
+  query getAuthor {
+    author {
+      firstName
+      lastName
+    }
+  }
+`;
+
 @Component({
   selector: 'author-data',
   template: `
@@ -22,14 +31,7 @@ export class AuthorDataComponent implements OnInit {
 
   ngOnInit() {
     this.author = this.apollo.watchQuery({
-      query: gql`
-        query getAuthor {
-          author {
-            firstName
-            lastName
-          }
-        }
-      `
+      query: getAuthorQuery
     })
     .map(({data}) => data.author) as ApolloQueryObservable<ApolloQueryResult>;
   }
