@@ -16,6 +16,9 @@ import { Component } from '@angular/core';
 
     <p>Hello Angular Universal App</p>
 
+    <div>
+      <author-data></author-data>
+    </div>
     <router-outlet></router-outlet>
   `
 })

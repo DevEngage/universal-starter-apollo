@@ -7,10 +7,13 @@ __platform_browser_private__.HammerGesturesPlugin.prototype.supports = universal
 import { NgModule, Inject, Optional, SkipSelf } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { UniversalModule, isBrowser, isNode } from 'angular2-universal/node'; // for AoT we need to manually split universal packages
+import { ApolloModule } from 'angular2-apollo';
 
+import { client } from './apollo.node';
 import { SharedModule } from './shared/shared.module';
 import { HomeModule } from './home/home.module';
 import { AboutModule } from './about/about.module';
+import { AuthorModule } from './author/author.module';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { CacheService } from './shared/cache.service';
@@ -29,10 +32,12 @@ export function getLRU(lru?: any) {
   imports: [
     UniversalModule, // NodeModule, NodeHttpModule, and NodeJsonpModule are included
     FormsModule,
+    ApolloModule.withClient(client),
 
     SharedModule,
     HomeModule,
     AboutModule,
+    AuthorModule,
 
     AppRoutingModule
   ],

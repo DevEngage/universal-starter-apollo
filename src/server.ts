@@ -24,6 +24,7 @@ import { createEngine } from 'angular2-express-engine';
 
 // App
 import { MainModule } from './app/app.node.module';
+import { GraphQL, GraphiQL } from './backend/graphql';
 
 // enable prod for faster renders
 enableProdMode();
@@ -76,6 +77,8 @@ app.get('/about/*', ngApp);
 app.get('/home', ngApp);
 app.get('/home/*', ngApp);
 
+app.use('/graphql', bodyParser.json(), GraphQL());
+app.use('/graphiql', GraphiQL());
 
 app.get('*', function(req, res) {
   res.setHeader('Content-Type', 'application/json');
